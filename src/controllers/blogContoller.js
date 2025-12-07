@@ -7,6 +7,9 @@ exports.createBlog = async (req, res) => {
       req.body;
 
     const coverImage = req.file ? req.file.filename : null;
+    const coverImageUrl = coverImage
+      ? `${req.protocol}://${req.get("host")}/uploads/${coverImage}`
+      : null;
 
     const newBlog = await Blog.create({
       title,
@@ -14,7 +17,7 @@ exports.createBlog = async (req, res) => {
       content,
       metaTitle,
       metaDescription,
-      coverImage,
+      coverImage: coverImageUrl,
     });
 
     res.status(201).json({ message: "Blog created", blog: newBlog });
@@ -27,7 +30,15 @@ exports.createBlog = async (req, res) => {
 exports.getBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
+
+    const blogsWithFullUrl = blogs.map((blog) => ({
+      ...blog.toObject(),
+      coverImage: blog.coverImage
+        ? `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
+        : null,
+    }));
+
+    res.json(blogsWithFullUrl);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -37,7 +48,17 @@ exports.getBlogs = async (req, res) => {
 exports.getBlog = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
-    res.json(blog);
+
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+    const blogWithFullUrl = {
+      ...blog.toObject(),
+      coverImage: blog.coverImage
+        ? `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
+        : null,
+    };
+
+    res.json(blogWithFullUrl);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -50,6 +71,9 @@ exports.updateBlog = async (req, res) => {
       req.body;
 
     const coverImage = req.file ? req.file.filename : undefined;
+    const coverImageUrl = coverImage
+      ? `${req.protocol}://${req.get("host")}/uploads/${coverImage}`
+      : undefined;
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.id,
@@ -59,7 +83,7 @@ exports.updateBlog = async (req, res) => {
         content,
         metaTitle,
         metaDescription,
-        ...(coverImage && { coverImage }),
+        ...(coverImageUrl && { coverImage: coverImageUrl }),
       },
       { new: true }
     );
