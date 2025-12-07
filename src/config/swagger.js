@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:5623",
+        url: "https://hackathon.techinfo.uz",
       },
     ],
   },
