@@ -1,16 +1,15 @@
-const multer = require("multer");
-const path = require("path");
+const multer = require('multer');
+const path = require('path');
 
+// Rasm papkasi /var/www/hackathon_back/uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(process.cwd(), "uploads"));
+  destination: function (req, file, cb) {
+    cb(null, '/var/www/hackathon_back/uploads'); // bu papka mavjud bo'lishi va www-data ga o'qish/yozish huquqi bo'lishi kerak
   },
-  filename: (req, file, cb) => {
-    const safeName = file.originalname.replace(/\s+/g, "_");
-    cb(null, Date.now() + "-" + safeName);
-  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
 });
 
 const upload = multer({ storage });
-
-module.exports = upload;
