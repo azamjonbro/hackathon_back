@@ -1,7 +1,8 @@
 const multer = require("multer");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
+// uploads papkaning absolute yo‘li
 const uploadDir = "/var/www/hackathon_back/uploads";
 
 // papka mavjud bo'lmasa yaratamiz
@@ -17,6 +18,4 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
-
-module.exports = upload;
+module.exports = multer({ storage });

@@ -3,13 +3,8 @@ const Blog = require("../models/blog");
 // CREATE
 exports.createBlog = async (req, res) => {
   try {
-    const { title, shortDescription, content, metaTitle, metaDescription } =
-      req.body;
-
+    const { title, shortDescription, content, metaTitle, metaDescription } = req.body;
     const coverImage = req.file ? req.file.filename : null;
-    const coverImageUrl = coverImage
-      ? `${req.protocol}://${req.get("host")}/uploads/${coverImage}`
-      : null;
 
     const newBlog = await Blog.create({
       title,
@@ -17,7 +12,7 @@ exports.createBlog = async (req, res) => {
       content,
       metaTitle,
       metaDescription,
-      coverImage: coverImageUrl,
+      coverImage,
     });
 
     res.status(201).json({ message: "Blog created", blog: newBlog });
@@ -27,47 +22,34 @@ exports.createBlog = async (req, res) => {
 };
 
 // GET ALL
-// GET ALL BLOGS
 exports.getBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
-
     const blogsWithFullUrl = blogs.map((blog) => {
       let coverImage = blog.coverImage;
-
-      // Agar coverImage allaqachon full URL bo'lsa — qayta qo‘shmaymiz
       if (coverImage && !coverImage.startsWith("http")) {
         coverImage = `${req.protocol}://${req.get("host")}/uploads/${coverImage}`;
       }
-
-      return {
-        ...blog.toObject(),
-        coverImage,
-      };
+      return { ...blog.toObject(), coverImage };
     });
-
     res.json(blogsWithFullUrl);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
 // GET SINGLE
 exports.getBlog = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
-
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-    const blogWithFullUrl = {
-  ...blog.toObject(),
-  coverImage: blog.coverImage
-    ? `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
-    : null,
-};
+    let coverImage = blog.coverImage;
+    if (coverImage && !coverImage.startsWith("http")) {
+      coverImage = `${req.protocol}://${req.get("host")}/uploads/${coverImage}`;
+    }
 
-    res.json(blogWithFullUrl);
+    res.json({ ...blog.toObject(), coverImage });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -76,24 +58,12 @@ exports.getBlog = async (req, res) => {
 // UPDATE
 exports.updateBlog = async (req, res) => {
   try {
-    const { title, shortDescription, content, metaTitle, metaDescription } =
-      req.body;
-
+    const { title, shortDescription, content, metaTitle, metaDescription } = req.body;
     const coverImage = req.file ? req.file.filename : undefined;
-    const coverImageUrl = coverImage
-      ? `${req.protocol}://${req.get("host")}/uploads/${coverImage}`
-      : undefined;
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.id,
-      {
-        title,
-        shortDescription,
-        content,
-        metaTitle,
-        metaDescription,
-        ...(coverImageUrl && { coverImage: coverImageUrl }),
-      },
+      { title, shortDescription, content, metaTitle, metaDescription, ...(coverImage && { coverImage }) },
       { new: true }
     );
 
