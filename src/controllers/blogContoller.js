@@ -27,22 +27,31 @@ exports.createBlog = async (req, res) => {
 };
 
 // GET ALL
+// GET ALL BLOGS
 exports.getBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
 
-    const blogsWithFullUrl = blogs.map((blog) => ({
-      ...blog.toObject(),
-      coverImage: blog.coverImage
-        ? `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
-        : null,
-    }));
+    const blogsWithFullUrl = blogs.map((blog) => {
+      let coverImage = blog.coverImage;
+
+      // Agar coverImage allaqachon full URL bo'lsa — qayta qo‘shmaymiz
+      if (coverImage && !coverImage.startsWith("http")) {
+        coverImage = `${req.protocol}://${req.get("host")}/uploads/${coverImage}`;
+      }
+
+      return {
+        ...blog.toObject(),
+        coverImage,
+      };
+    });
 
     res.json(blogsWithFullUrl);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // GET SINGLE
 exports.getBlog = async (req, res) => {
