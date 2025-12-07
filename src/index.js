@@ -9,7 +9,7 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static('/var/www/hackathon_back/uploads'));
+app.use('/uploads', express.static('uploads'));
 
 
 // SWAGGER UI
