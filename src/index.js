@@ -26,7 +26,7 @@ app.use((err, req, res, next) => {
 
 // DATABASE
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect("mongodb://IdentityNull:painintheassman@88.218.168.217:27017/hackathon?authSource=admin")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
