@@ -31,5 +31,5 @@ mongoose
   .catch((err) => console.error(err));
 
 // SERVER
-const PORT = process.env.PORT || 3322;
+const PORT = process.env.PORT || 5623;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
