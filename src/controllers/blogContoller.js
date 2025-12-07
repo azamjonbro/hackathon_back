@@ -54,7 +54,9 @@ exports.getBlog = async (req, res) => {
     const blogWithFullUrl = {
       ...blog.toObject(),
       coverImage: blog.coverImage
-        ? `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
+        ? blog.coverImage.startsWith('http')
+          ? blog.coverImage 
+          : `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
         : null,
     };
 
