@@ -31,7 +31,10 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"], // Swagger docs route fayllardan olinadi
+  apis: [
+    path.join(__dirname, "../routes/*.js"),
+    path.join(__dirname, "../routes/**/*.js"),
+  ], // Swagger docs route fayllardan olinadi
 };
 
 const swaggerSpec = swaggerJsdoc(options);
