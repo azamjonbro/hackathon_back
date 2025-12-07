@@ -52,13 +52,11 @@ exports.getBlog = async (req, res) => {
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
     const blogWithFullUrl = {
-      ...blog.toObject(),
-      coverImage: blog.coverImage
-        ? blog.coverImage.startsWith('http')
-          ? blog.coverImage 
-          : `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
-        : null,
-    };
+  ...blog.toObject(),
+  coverImage: blog.coverImage
+    ? `${req.protocol}://${req.get("host")}/uploads/${blog.coverImage}`
+    : null,
+};
 
     res.json(blogWithFullUrl);
   } catch (error) {
