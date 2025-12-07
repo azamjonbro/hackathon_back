@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 // UPLOADS papkani avtomatik yaratib qo'yamiz
-const uploadDir = path.join(process.cwd(), "uploads");
+const uploadDir = "/var/www/hackathon_back/uploads";
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
