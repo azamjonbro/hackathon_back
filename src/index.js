@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const cors = require("cors")
 const mongoose = require("mongoose");
 require("dotenv").config();
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -8,6 +9,7 @@ const swaggerUi = require("swagger-ui-express");
 
 // JSON parser
 app.use(express.json());
+app.use(cors())
 app.use(express.urlencoded({ extended: true }));
 
 // STATIC FILES – rasm va boshqa fayllar
